@@ -21,26 +21,33 @@ import (
 )
 
 type TimeDuration struct {
-	duration int64
-	counter  int64
+	Duration int64 `json:"duration"`
+	Counter  int64 `json:"count"`
 }
 
 func (d *TimeDuration) Add(delta time.Duration) {
-	d.duration += delta.Nanoseconds()
-	d.counter++
+	d.Duration += delta.Nanoseconds()
+	d.Counter++
 }
 
 func (d *TimeDuration) MeanTimeUsecs() float64 {
-	if d.counter == 0 {
+	if d.Counter == 0 {
 		return 0.0
 	}
-	return (float64(d.duration) / float64(d.counter)) / 1000.0
+	return (float64(d.Duration) / float64(d.Counter)) / 1000.0
+}
+
+func (d *TimeDuration) Csv() string {
+	return fmt.Sprintf("%v,"+
+		"%v,",
+		d.Duration,
+		d.Counter)
 }
 
 func (d *TimeDuration) DeltaMeanTimeUsecs(prev *TimeDuration) float64 {
 	delta := TimeDuration{}
-	delta.duration = d.duration - prev.duration
-	delta.counter = d.counter - prev.counter
+	delta.Duration = d.Duration - prev.Duration
+	delta.Counter = d.Counter - prev.Counter
 	return delta.MeanTimeUsecs()
 }
 
@@ -51,8 +58,8 @@ func (d *TimeDuration) Copy() *TimeDuration {
 }
 
 func (d *TimeDuration) String() string {
-	return fmt.Sprintf("duration = %v\n"+
-		"counter = %v\n",
-		d.duration,
-		d.counter)
+	return fmt.Sprintf("Duration = %v\n"+
+		"Counter = %v\n",
+		d.Duration,
+		d.Counter)
 }
